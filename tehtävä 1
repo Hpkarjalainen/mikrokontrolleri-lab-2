@@ -23,5 +23,5 @@ count++;
 Serial.print("Timer int count: ");
 Serial.print(count);
 Serial.print("\n");
-digitalWrite(LED, digitalRead(LED) ^ 1);   //xor
+digitalWrite(LED, digitalRead(LED) ^ 1);   // "^" A bitwise XOR operation results in a 1 only if the input bits are different, else it results in a 0.
 }
