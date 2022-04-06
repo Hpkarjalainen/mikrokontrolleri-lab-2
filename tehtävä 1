@@ -1,5 +1,7 @@
 #define LED 12 
-volatile byte count=0;
+volatile byte sec=0;
+volatile byte min=0;
+volatile byte hour=0;
 void setup()
 {
 Serial.begin(9600);
@@ -19,9 +21,25 @@ void loop()
 }
 ISR(TIMER1_COMPA_vect)        // timer compare interrupt service routine
 {
-count++;
+    sec++;
+    if (sec >= 60) {
+        sec = 0;
+        min++;
+        if (min >= 60) {
+            min = 0;
+            hour++;
+            if (hour > 23) {
+                hour = 0;
+            }
+        }
+}
+
 Serial.print("Timer int count: ");
 Serial.print(count);
 Serial.print("\n");
 digitalWrite(LED, digitalRead(LED) ^ 1);   //xor
+}
+
+String time_string_converter(int number) {
+
 }
