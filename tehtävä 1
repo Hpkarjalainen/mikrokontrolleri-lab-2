@@ -9,7 +9,9 @@ noInterrupts();               // disable all interrupts
 TCCR1A = 0;                   //Timer/Counter 1 Control Register A nollataan
 TCCR1B = 0;                   //sama register B:lle
 TCNT1 = 0;                    //timer/counter 1?
-OCR1A = 62500;                // output compare match register 16MHz/256/2Hz eli vaihdetaan taajuutta pienemmälle?
+OCR1A = 62500;                // output compare match register 16MHz/256/2Hz tätä lukua säätämällä saadaan muutettua keskeytystä, 62500=1 sek (?)
+                              //kun tämä luku saavutettu, tulee keskeytys. Eli compare match-keskeytys
+
 TCCR1B = TCCR1B | B00001100 ; // CTC mode? and 256 prescaler?
 TIMSK1 = TIMSK1 | B00000010 ; // enable timer compare interrupt - Timer/Counter 1 Interrupt Mask Register
 interrupts();                 // enable all interrupts
