@@ -35,11 +35,11 @@ ISR(TIMER1_COMPA_vect)        // timer compare interrupt service routine
 }
 
 Serial.print("Timer int count: ");
-Serial.print(count);
+Serial.print(hour); // Definitely wrong way of presenting time ...
+Serial.print(":");
+Serial.print(min);
+Serial.print(":");
+Serial.print(sec);
 Serial.print("\n");
 digitalWrite(LED, digitalRead(LED) ^ 1);   //xor
-}
-
-String time_string_converter(int number) {
-
 }
