@@ -1,5 +1,8 @@
-// Kolmen kanavan ADC-keskeytysesimerkki siten, että keskeytys mahdollistetaan ADCRSA-rekisterin
+// Tässä esimerkkikoodi kolmen kanavan ADC-keskeytysesimerkki siten, että keskeytys mahdollistetaan ADCRSA-rekisterin
 // ADSC-bitillä (start conversion)
+
+// Tehtävä 2: Kahden kanavan kymmenen keskiarvoja pitää tulostaa serial monitorille
+
 int lippu=0;
 int arvo0,arvo1, arvo2;
 void setup()
@@ -21,7 +24,7 @@ void setup()
 void loop()
 {
 ADCSRA |= B01000000;
-Serial.print(arvo0);
+Serial.print(arvo0);  //näistä kun nappaa yhden tulostuksen niin saa helposti kaksi kanavaa. Mutta pitäis muukin turha poistaa.
 Serial.print("\t");
 Serial.print(arvo1);
 Serial.print("\t");
@@ -32,17 +35,17 @@ ISR(ADC_vect)
 {
  switch(lippu) 
  { 
- //
+ //alla olevista voi poistaa ehkä yhden?
  case 0:
  arvo0 = ADCL | (ADCH << 8);
  lippu=1;
- ADMUX |= B00000001;
+ ADMUX |= B00000001; //kanavan vaihto
  break;
  case 1:
  arvo1 = ADCL | (ADCH << 8);
  lippu=2;
  ADMUX &= B11110000;
- ADMUX |= B00000010;
+ ADMUX |= B00000010;   //kanavan vaihto
  break;
  case 2:
  arvo2 = ADCL | (ADCH << 8);
