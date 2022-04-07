@@ -19,7 +19,13 @@ interrupts();                 // enable all interrupts
 }
 
 void time_converter(char *holder, int time) {
+    // Holder is pointer to array of size 3.
+    // Time is the value to be converted into holder pointer.
+    // Returns nothing because pointer references to memory address
+    
     if (time < 10) {
+        // sprintf is same as printf but it doesn't print value but it saves it
+        // to the 1 argument (holder)
         sprintf(holder, "0%d", time);
     } else {
         sprintf(holder, "%d", time);
@@ -32,6 +38,9 @@ void loop()
 }
 ISR(TIMER1_COMPA_vect)        // timer compare interrupt service routine
 {
+    // The time is actually two digits but size must be 3 because 
+    // we save it as a string value to array and string value always adds '0'
+    // to the end.
     char sec_str[3], min_str[3], hour_str[3];
 
     sec++;
@@ -47,6 +56,7 @@ ISR(TIMER1_COMPA_vect)        // timer compare interrupt service routine
         }
     }
 
+    // No need to return anything when hour_str will be a pointer
     time_converter(hour_str, hour)
     time_converter(min_str, min)
     time_converter(sec_str, sec)
