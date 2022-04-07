@@ -1,0 +1,53 @@
+// Kolmen kanavan ADC-keskeytysesimerkki siten, että keskeytys mahdollistetaan ADCRSA-rekisterin
+// ADSC-bitillä (start conversion)
+int lippu=0;
+int arvo0,arvo1, arvo2;
+void setup()
+{
+ Serial.begin(9600);
+ noInterrupts();
+ //AD
+ ADMUX &= B11011111;
+ ADMUX |= B01000000;
+ ADMUX &= B11110000;
+ 
+ ADCSRA |= B10000000;
+ ADCSRA |= B00000000;
+ ADCSRA |= B00000111;
+ ADCSRA |= B00001000;
+ ADCSRA |= B01000000;
+ interrupts();
+}
+void loop()
+{
+ADCSRA |= B01000000;
+Serial.print(arvo0);
+Serial.print("\t");
+Serial.print(arvo1);
+Serial.print("\t");
+Serial.print(arvo2);
+Serial.print("\n");
+}
+ISR(ADC_vect) 
+{
+ switch(lippu) 
+ { 
+ //
+ case 0:
+ arvo0 = ADCL | (ADCH << 8);
+ lippu=1;
+ ADMUX |= B00000001;
+ break;
+ case 1:
+ arvo1 = ADCL | (ADCH << 8);
+ lippu=2;
+ ADMUX &= B11110000;
+ ADMUX |= B00000010;
+ break;
+ case 2:
+ arvo2 = ADCL | (ADCH << 8);
+ lippu=0;
+ ADMUX &= B11110000;
+ break;
+ }
+}
