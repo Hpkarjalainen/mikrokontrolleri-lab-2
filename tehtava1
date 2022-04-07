@@ -1,3 +1,4 @@
+#include <stdio.h>
 #define LED 12 
 volatile byte sec=0;
 volatile byte min=0;
@@ -16,11 +17,23 @@ TCCR1B = TCCR1B | B00001100 ; // CTC mode? and 256 prescaler?
 TIMSK1 = TIMSK1 | B00000010 ; // enable timer compare interrupt - Timer/Counter 1 Interrupt Mask Register
 interrupts();                 // enable all interrupts
 }
+
+void time_converter(char *holder, int time) {
+    if (time < 10) {
+        sprintf(holder, "0%d", time);
+    } else {
+        sprintf(holder, "%d", time);
+    }
+}
+
+
 void loop()
 {
 }
 ISR(TIMER1_COMPA_vect)        // timer compare interrupt service routine
 {
+    char sec_str[3], min_str[3], hour_str[3];
+
     sec++;
     if (sec >= 60) {
         sec = 0;
@@ -32,14 +45,12 @@ ISR(TIMER1_COMPA_vect)        // timer compare interrupt service routine
                 hour = 0;
             }
         }
-}
+    }
 
-Serial.print("Timer int count: ");
-Serial.print(hour); // Definitely wrong way of presenting time ...
-Serial.print(":");
-Serial.print(min);
-Serial.print(":");
-Serial.print(sec);
-Serial.print("\n");
-digitalWrite(LED, digitalRead(LED) ^ 1);   //xor
+    time_converter(hour_str, hour)
+    time_converter(min_str, min)
+    time_converter(sec_str, sec)
+
+    Serial.printf("Timer int count: %s:%s:%s\n", hour_str, min_str, sec_str);
+    digitalWrite(LED, digitalRead(LED) ^ 1);   //xor
 }
