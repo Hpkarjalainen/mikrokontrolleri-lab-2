@@ -42,7 +42,8 @@ ISR(TIMER1_COMPA_vect)        // timer compare interrupt service routine
     // we save it as a string value to array and string value always adds '0'
     // to the end.
     char sec_str[3], min_str[3], hour_str[3];
-
+    char output_msg[27];
+    
     sec++;
     if (sec >= 60) {
         sec = 0;
@@ -57,10 +58,12 @@ ISR(TIMER1_COMPA_vect)        // timer compare interrupt service routine
     }
 
     // No need to return anything when hour_str will be a pointer
-    time_converter(hour_str, hour)
-    time_converter(min_str, min)
-    time_converter(sec_str, sec)
+    time_converter(hour_str, hour);
+    time_converter(min_str, min);
+    time_converter(sec_str, sec);
 
-    Serial.printf("Timer int count: %s:%s:%s\n", hour_str, min_str, sec_str);
+    sprintf(output_msg, "Timer int count: %s:%s:%s\n", hour_str, min_str, sec_str);
+    
+    Serial.print(output_msg);
     digitalWrite(LED, digitalRead(LED) ^ 1);   //xor
 }
