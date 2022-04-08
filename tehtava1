@@ -60,7 +60,11 @@ ISR(TIMER1_COMPA_vect)        // timer compare interrupt service routine
     time_converter(hour_str, hour)
     time_converter(min_str, min)
     time_converter(sec_str, sec)
-
-    Serial.printf("Timer int count: %s:%s:%s\n", hour_str, min_str, sec_str);
+    Serial.print(hour_str);         //no format specifiers needed
+    Serial.print(":");
+    Serial.print(min_str);
+    Serial.print(":");
+    Serial.println(sec_str);
+    
     digitalWrite(LED, digitalRead(LED) ^ 1);   //xor
 }
