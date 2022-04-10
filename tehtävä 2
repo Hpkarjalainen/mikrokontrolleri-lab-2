@@ -1,7 +1,7 @@
-// Tässä esimerkkikoodi kolmen kanavan ADC-keskeytysesimerkki siten, että keskeytys mahdollistetaan ADCRSA-rekisterin
+// Kolmen kanavan ADC-keskeytysesimerkki siten, että keskeytys mahdollistetaan ADCRSA-rekisterin
 // ADSC-bitillä (start conversion)
-
-// Tehtävä 2: Kahden kanavan kymmenen keskiarvoja pitää tulostaa serial monitorille
+//muokattu alkuperäistä koodia laittamalla turhat kohdat kommenteiksi
+//vaikuttaisi toimivan kahdella kanavalla
 
 int lippu=0;
 int arvo0,arvo1, arvo2;
@@ -10,24 +10,24 @@ void setup()
  Serial.begin(9600);
  noInterrupts();
  //AD
- ADMUX &= B11011111;
- ADMUX |= B01000000;
- ADMUX &= B11110000;
+ ADMUX &= B11011111; //Adlar=0, result right adjusted, 1 olisi left adjusted
+ ADMUX |= B01000000; //REFS0=1, voltage reference
+ ADMUX &= B11110000; //MUX0-3, analog channel, gain selection, ADC-channel input 0
  
- ADCSRA |= B10000000;
- ADCSRA |= B00000000;
- ADCSRA |= B00000111;
- ADCSRA |= B00001000;
- ADCSRA |= B01000000;
+ ADCSRA |= B10000000; //ADEN=1, ADC-enable, A/D-muunnin käynnistys
+ //ADCSRA |= B00000000;
+ ADCSRA |= B00000111; //ADPS2-0=1, prescaler/esijakaja 128 , muuten liikaa hertsejä, POISTAMINEN EI NÄYTTÄNYT VAIKUTTAVAN?
+ ADCSRA |= B00001000; //ADIE=1, ADC interrupt enable (ADC conversion complete interrupt is enabled)
+ //ADCSRA |= B01000000; //ADCS=1, start conversion ,ALEMPANA SAMA ELI TÄMÄ TURHA?
  interrupts();
 }
 void loop()
 {
-ADCSRA |= B01000000;
-Serial.print(arvo0);  //näistä kun nappaa yhden tulostuksen niin saa helposti kaksi kanavaa. Mutta pitäis muukin turha poistaa.
+ADCSRA |= B01000000; //ADSC=1, start conversion, tässä AD muunnin kääntää arvot
+Serial.print(arvo0);
 Serial.print("\t");
-Serial.print(arvo1);
-Serial.print("\t");
+//Serial.print(arvo1);
+//Serial.print("\t");
 Serial.print(arvo2);
 Serial.print("\n");
 }
@@ -35,19 +35,19 @@ ISR(ADC_vect)
 {
  switch(lippu) 
  { 
- //alla olevista voi poistaa ehkä yhden?
+ //
  case 0:
- arvo0 = ADCL | (ADCH << 8);
+ arvo0 = ADCL | (ADCH << 8);  //ADC-data registers (AD-muunnin luo 10-bittisen tuloksen joka tallennetaan näihin rekistereihin)
  lippu=1;
- ADMUX |= B00000001; //kanavan vaihto
+ ADMUX |= B00000001;
  break;
+ //case 1:
+ //arvo1 = ADCL | (ADCH << 8);
+ //lippu=2;
+ //ADMUX &= B11110000;
+ //ADMUX |= B00000010;
+ //break;
  case 1:
- arvo1 = ADCL | (ADCH << 8);
- lippu=2;
- ADMUX &= B11110000;
- ADMUX |= B00000010;   //kanavan vaihto
- break;
- case 2:
  arvo2 = ADCL | (ADCH << 8);
  lippu=0;
  ADMUX &= B11110000;
